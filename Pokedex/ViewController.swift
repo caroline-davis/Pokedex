@@ -66,9 +66,25 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         } catch let err as NSError {
                 print(err.debugDescription)
             }
+    }
+    
+   
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        var poke: Pokemon!
+        if inSearchMode {
+            
+            poke = filteredPokemon[indexPath.row]
+            
+        } else {
+            
+            poke = pokemon[indexPath.row]
+        }
+        performSegue(withIdentifier: "PokemonDetailVC", sender: poke)
         
         
     }
+
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
@@ -91,16 +107,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if inSearchMode {
             return filteredPokemon.count
-        } else {
-        return pokemon.count
         }
+        return pokemon.count
+        
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -145,6 +158,20 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
         
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print(sender, segue.identifier)
+        if segue.identifier == "PokemonDetailVC" {
+            if let detailsVC = segue.destination as? PokemonDetailVC {
+                if let poke = sender as? Pokemon {
+                    detailsVC.pokemon = poke
+                }
+            }
+        }
+        
+    }
+    
+
 
 }
 
