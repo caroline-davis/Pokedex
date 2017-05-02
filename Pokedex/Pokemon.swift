@@ -13,7 +13,7 @@ class Pokemon {
     
     private var _name: String!
     private var _pokedexId: Int!
-    private var _desciption: String!
+    private var _description: String!
     private var _type: String!
     private var _defense: String!
     private var _height: String!
@@ -24,10 +24,10 @@ class Pokemon {
     
     // this is for data protection incase the value is empty the app wont crash
     var decription: String! {
-        if _desciption == nil {
-            _desciption = ""
+        if _description == nil {
+            _description = ""
         }
-        return _desciption
+        return _description
     }
     
     var type: String! {
@@ -106,8 +106,7 @@ class Pokemon {
                     self._defense = "\(defense)"
                 }
                 
-
-    
+                // unpacking the array for type
                 if let types = dict["types"] as? [Dictionary<String, String>] , types.count > 0 {
                     if let name = types[0]["name"] {
                         self._type = name.capitalized
@@ -124,16 +123,37 @@ class Pokemon {
                     
                 } else {
                     self._type = ""
+                } // end of type unpacking
+                
+                
+                if let descArray = dict["descriptions"] as? [Dictionary<String, String>] , descArray.count > 0 {
+                    if let url = descArray[0]["resource_uri"] {
+                        
+                        let descURL = "\(URL_BASE)\(url)"
+                        
+                        // have to do another api call because the description is at another webaddress
+                        Alamofire.request(descURL).responseJSON(completionHandler: { (response) in
+                            if let descDict = response.result.value as? Dictionary<String, AnyObject> {
+                                if let description = descDict["description"] as? String {
+                                    
+                                    let newDesc = description.replacingOccurrences(of: "POKMON", with: "Pokemon")
+                                    self._description = newDesc
+    
+                                }
+                            }
+                            completed()
+                            
+                        })
+                        
+                    }
+                    
+                } else {
+                    self._description = ""
                 }
                 
-                print(self._weight)
-                print(self._defense)
-                print(self._height)
-                print(self._attack)
-                print(self._type)
             }
             // remember to add this!!!!
-           completed()
+            completed()
         }
     }
     

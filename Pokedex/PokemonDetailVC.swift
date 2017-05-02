@@ -52,6 +52,7 @@ class PokemonDetailVC: UIViewController {
         weightLabel.text = pokemon.weight
         heightLabel.text = pokemon.height
         typeLabel.text = pokemon.type
+        descriptionLabel.text = pokemon.decription
     }
 
     // take us back
